@@ -1,8 +1,8 @@
 <template>
   <li :class="listItemClass">
-    <h3>{{ item.text }}</h3>
+    <h3>{{ item.itemName }}</h3>
     <img
-      @click="$emit('delete-item', item.id)"
+      @click="$emit('delete-item', item.itemId)"
       :src="require('../assets/icons/' + iconPath)"
       alt="remove icon"
     />

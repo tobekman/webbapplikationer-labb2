@@ -70,14 +70,19 @@ export default {
       orangeButton: false,
     }
   },
+  mounted() {
+    this.getItems()
+  },
   methods: {
     addItem(e) {
       e.preventDefault()
       if (this.itemText) {
         const newItem = {
-          id: Math.floor(Math.random() * 999999),
-          text: this.itemText,
+          itemId: this.getNewId(),
+          itemName: this.itemText,
         }
+
+        this.postItem(newItem)
 
         this.items.push(newItem)
         this.itemText = ''
@@ -86,7 +91,8 @@ export default {
       }
     },
     removeItem(id) {
-      this.items = this.items.filter((activity) => activity.id !== id)
+      this.items = this.items.filter((item) => item.itemId !== id)
+      this.deleteItem(id)
     },
     onClickDefault() {
       this.textInputClass = 'item-form-input input_default'
@@ -142,6 +148,52 @@ export default {
         this.pinkButton = false
         this.orangeButton = true
       }
+    },
+    async postItem(item) {
+      const response = await fetch('http://192.168.0.5:3000/api/item', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(item),
+      })
+      return response.json()
+    },
+    async getItems() {
+      await fetch('http://192.168.0.5:3000/api/item')
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          this.items = data.items
+        })
+    },
+    async deleteItem(itemId) {
+      await fetch('http://192.168.0.5:3000/api/item/' + itemId, {
+        method: 'DELETE',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+      })
+    },
+    getNewId() {
+      let highestId = 0
+      this.items.forEach((item) => {
+        if (item.itemId > highestId) {
+          highestId = item.itemId
+        }
+      })
+      return highestId + 1
     },
   },
 }

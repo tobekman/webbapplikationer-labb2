@@ -1,7 +1,7 @@
 <template>
   <ul :key="item.id" v-for="item in items">
     <Item
-      @delete-item="$emit('delete-item', item.id)"
+      @delete-item="$emit('delete-item', item.itemId)"
       :item="item"
       :listItemClass="listItemClass"
       :iconPath="iconPath"
